@@ -18,16 +18,12 @@ import java.security.cert.X509Certificate;
 import java.security.interfaces.RSAPublicKey;
 import java.util.Arrays;
 import java.util.Base64;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.Base64.Encoder;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import javax.annotation.PostConstruct;
+import javax.json.Json;
 import javax.management.AttributeNotFoundException;
 import javax.management.InstanceNotFoundException;
 import javax.management.MBeanException;
@@ -48,9 +44,9 @@ import org.jose4j.jws.JsonWebSignature;
 import org.jose4j.jwt.JwtClaims;
 import org.jose4j.lang.JoseException;
 
-@Path("/jwt")
-public class JWT {
-	private static final Logger log = Logger.getLogger(JWT.class.getName());
+@Path("/auth")
+public class Auth {
+	private static final Logger log = Logger.getLogger(Auth.class.getName());
 	private X509Certificate certificate;
 	private PrivateKey privateKey;
 
@@ -112,7 +108,33 @@ public class JWT {
 		return new FileInputStream(filePath);
 	}
 
+	/**
+	 * Returns the public key in the JSON Web Key Format (JWK)
+	 * 
+	 * https://tools.ietf.org/html/rfc7517
+	 * 
+	 * @return
+	 */
 	@GET
+	@Path("/jwk")
+	public String jwk() {
+
+		PublicKey publicKey = certificate.getPublicKey();
+		if (!(publicKey instanceof RSAPublicKey)) {
+			throw new IllegalArgumentException("The given key is not a RSA  key. It is: "
+					+ (publicKey != null ? publicKey.getClass().getName() : ""));
+		}
+
+		RSAPublicKey rsaPublicKey = (RSAPublicKey) publicKey;
+
+		return Json.createObjectBuilder().add("kty", "RSA")
+				.add("n", Base64.getEncoder().encodeToString(rsaPublicKey.getModulus().toByteArray()))
+				.add("e", Base64.getEncoder().encodeToString(rsaPublicKey.getPublicExponent().toByteArray())).build()
+				.toString();
+	}
+
+	@GET
+	@Path("/jwt")
 	public String jwt(@Context HttpServletRequest httpServletRequest) {
 
 		String authorization = httpServletRequest.getHeader("Authorization");
