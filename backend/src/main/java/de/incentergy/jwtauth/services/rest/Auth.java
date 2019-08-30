@@ -135,7 +135,7 @@ public class Auth {
 
 	@GET
 	@Path("/jwt")
-	public String jwt(@Context HttpServletRequest httpServletRequest) {
+	public Response jwt(@Context HttpServletRequest httpServletRequest) {
 
 		String authorization = httpServletRequest.getHeader("Authorization");
 		// btoa("admin:admin") "YWRtaW46YWRtaW4="
@@ -232,9 +232,9 @@ public class Auth {
 			// party
 			// over the clouds and through the interwebs.
 			log.fine("JWT: " + jwt);
-			return jwt;
+			return Response.ok(jwt, "text/plain").build();
 		} else {
-			throw new WebApplicationException(Response.Status.UNAUTHORIZED);
+			return Response.status(Response.Status.UNAUTHORIZED).build();
 		}
 	}
 }
