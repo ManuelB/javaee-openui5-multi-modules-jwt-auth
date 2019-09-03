@@ -18,7 +18,6 @@ import java.security.cert.X509Certificate;
 import java.security.interfaces.RSAPublicKey;
 import java.util.Arrays;
 import java.util.Base64;
-import java.util.Base64.Encoder;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -34,7 +33,6 @@ import javax.management.ReflectionException;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
-import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 
