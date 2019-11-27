@@ -191,7 +191,7 @@ public class Auth {
 													// subject can
 													// be added
 			claims.setClaim("img", christian ? "/employee-backend/img/0001.jpg" : "");
-			claims.setStringListClaim("groups", admin ? Arrays.asList("Administrator", "Manager", "Employee") : Arrays.asList("Employee")); // multi-valued
+			claims.setStringListClaim("groups", admin ? Arrays.asList("Administrator", "Developer", "Manager", "Employee") : Arrays.asList("Employee")); // multi-valued
 			// claims
 			// work too
 			// and will
