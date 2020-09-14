@@ -36,10 +36,14 @@ import javax.ws.rs.Path;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 
+import org.jose4j.jwa.AlgorithmConstraints;
+import org.jose4j.jwa.AlgorithmConstraints.ConstraintType;
+import org.jose4j.jwe.KeyManagementAlgorithmIdentifiers;
 import org.jose4j.jwk.RsaJsonWebKey;
 import org.jose4j.jws.AlgorithmIdentifiers;
 import org.jose4j.jws.JsonWebSignature;
 import org.jose4j.jwt.JwtClaims;
+import org.jose4j.jwx.HeaderParameterNames;
 import org.jose4j.lang.JoseException;
 
 @Path("/auth")
@@ -140,14 +144,13 @@ public class Auth {
 		boolean admin = authorization.equals("Basic YWRtaW46YWRtaW4=");
 		// btoa("christian:christian") "Y2hyaXN0aWFuOmNocmlzdGlhbg=="
 		boolean christian = authorization.equals("Basic Y2hyaXN0aWFuOmNocmlzdGlhbg==");
-		if (authorization != null && (admin
-				|| christian)) {
-			
-			String subject = admin ? "26f41ec3-1873-47c1-aebc-ee46b66b946a" : (christian ? "7607576a-07ee-43fe-a53b-d7b6d84a5dce" : "unknown");
-			
+		if (authorization != null && (admin || christian)) {
+
+			String subject = admin ? "26f41ec3-1873-47c1-aebc-ee46b66b946a"
+					: (christian ? "7607576a-07ee-43fe-a53b-d7b6d84a5dce" : "unknown");
+
 			String loginName = admin ? "admin" : (christian ? "christian" : "unknown");
-			
-			
+
 			PublicKey publicKey = certificate.getPublicKey();
 			if (!(publicKey instanceof RSAPublicKey)) {
 				throw new IllegalArgumentException("The given key is not a RSA  key. It is: "
@@ -181,17 +184,19 @@ public class Auth {
 			claims.setSubject(subject); // the subject/principal is whom the
 			// token is about
 
-			claims.setClaim("email", loginName+"@example.com"); // additional
-															// claims/attributes
-															// about the subject can
-															// be added
+			claims.setClaim("email", loginName + "@example.com"); // additional
+			// claims/attributes
+			// about the subject can
+			// be added
 			claims.setClaim("loginName", loginName); // additional
-													// claims/attributes
-													// about the
-													// subject can
-													// be added
+														// claims/attributes
+														// about the
+														// subject can
+														// be added
 			claims.setClaim("img", christian ? "/employee-backend/img/0001.jpg" : "");
-			claims.setStringListClaim("groups", admin ? Arrays.asList("Administrator", "Developer", "Manager", "Employee") : Arrays.asList("Employee")); // multi-valued
+			claims.setStringListClaim("groups",
+					admin ? Arrays.asList("Administrator", "Developer", "Manager", "Employee")
+							: Arrays.asList("Employee")); // multi-valued
 			// claims
 			// work too
 			// and will
